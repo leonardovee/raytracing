@@ -7,11 +7,11 @@ pub struct Vector3 {
 }
 
 impl Vector3 {
-    pub fn length(&self) -> f64 {
-        self.normalize().sqrt()
+    pub fn _length(&self) -> f64 {
+        self._normalize().sqrt()
     }
     
-    pub fn normalize(&self) -> f64 {
+    pub fn _normalize(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
 }
@@ -120,8 +120,8 @@ mod tests {
     fn test_vector3_length() {
         let x = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
 
-        let length = x.length();
+        let length = x._length();
 
-        assert_eq!(length, 3.4641016151377544);
+        assert_eq!(length, 5.196152422706632);
     }
 }
