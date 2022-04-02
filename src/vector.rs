@@ -6,6 +6,16 @@ pub struct Vector3 {
     pub z: f64,
 }
 
+impl Vector3 {
+    pub fn length(&self) -> f64 {
+        self.normalize().sqrt()
+    }
+    
+    pub fn normalize(&self) -> f64 {
+        (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
+    }
+}
+
 impl Add for Vector3 {
     type Output = Vector3;
 
@@ -104,5 +114,14 @@ mod tests {
         assert_eq!(div.x, 5.0);
         assert_eq!(div.y, 5.0);
         assert_eq!(div.z, 5.0);
+    }
+
+    #[test]
+    fn test_vector3_length() {
+        let x = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
+
+        let length = x.length();
+
+        assert_eq!(length, 3.4641016151377544);
     }
 }
