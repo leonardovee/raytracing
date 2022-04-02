@@ -1,27 +1,37 @@
+use std::{fs::File, io::Write};
+
 fn main() {
     let image_width = 256;
     let image_height = 256;
-    let mut image_out = "".to_owned();
-    image_out.push_str("P3\n");
-    image_out.push_str("256");
-    image_out.push_str(" ");
-    image_out.push_str("256");
-    image_out.push_str("\n255\n");
-    for j in (0..image_width).rev() {
-        for _i in 1..image_height {
-            let r = j / (image_width - 1);
-            let g = j / (image_height - 1);
-            let b = 0.25;
-            let ir = 255 * r;
-            let ig = 255 * g;
-            let ib = 255 * b;
-            image_out.push_str(ir.to_string());
-            image_out.push_str(" ");
-            image_out.push_str(&ig.to_string());
-            image_out.push_str(" ");
-            image_out.push_str(&ib.to_string());
-            image_out.push_str("\n");
+
+    let mut image_buffer: Vec<String> = vec![
+        String::from("P3\n"),
+        String::from("256"),
+        String::from(" "),
+        String::from("256"),
+        String::from("\n255\n")
+    ];
+
+    for j in (0..image_height).rev() {
+        for i in 0..image_width {
+            let r = i as f64 / (image_width - 1) as f64;
+            let g = j as f64/ (image_height - 1) as f64;
+
+            let ir = 255.0 * r;
+            let ig = 255.0 * g;
+            let ib = 63.0;
+
+            image_buffer.push(ir.to_string());
+            image_buffer.push(String::from(" "));
+
+            image_buffer.push(ig.to_string());
+            image_buffer.push(String::from(" "));
+
+            image_buffer.push(ib.to_string());
+            image_buffer.push(String::from("\n"));
         }
     }
-    println!("{}", image_out);
+
+    let mut file = File::create("test.ppm").unwrap();
+    file.write(image_buffer.concat().as_bytes()).unwrap();
 }
