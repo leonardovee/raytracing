@@ -15,7 +15,7 @@ $ cargo run
 
 ## Outcome
 
-Right now, if you execute the project you'll a output like bellow:
+Right now, if you execute the project you'll have a output like bellow:
 
 ![Shaded sphere](/img/sphere.png)
 
