@@ -1,6 +1,9 @@
 use std::{fs::File, io::Write};
 
+use rendering::{render, Color};
+
 mod vector;
+mod rendering;
 
 fn main() {
     let image_width = 256;
@@ -23,17 +26,10 @@ fn main() {
             let ig = 255.0 * g;
             let ib = 63.0;
 
-            image_buffer.push(ir.to_string());
-            image_buffer.push(String::from(" "));
-
-            image_buffer.push(ig.to_string());
-            image_buffer.push(String::from(" "));
-
-            image_buffer.push(ib.to_string());
-            image_buffer.push(String::from("\n"));
+            render(&mut image_buffer, Color { red: ir, green: ig, blue: ib });
         }
     }
 
     let mut file = File::create("test.ppm").unwrap();
-    file.write(image_buffer.concat().as_bytes()).unwrap();
+    file.write_all(image_buffer.concat().as_bytes()).unwrap();
 }
