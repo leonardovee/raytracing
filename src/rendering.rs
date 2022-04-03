@@ -5,6 +5,12 @@ pub struct Ray {
     pub direction: Vector3,
 }
 
+impl Ray {
+    pub fn color(&self) -> Color {
+        Color { red: 1.0, green: 1.0, blue: 1.0 }
+    }
+}
+
 pub struct Color {
     pub red: f64,
     pub green: f64,
