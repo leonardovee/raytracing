@@ -8,22 +8,32 @@ pub struct Ray {
 }
 
 impl Ray {
+    pub fn at(&self, t: f64) -> Vector3 {
+        self.origin + (self.direction * t)
+    }
+
     pub fn color(&self) -> Color {
-        if self.hit_sphere(Vector3 { x: 0.0, y: 0.0, z: -1.0 }, 0.5) {
-            return Color { red: 1.0, green: 0.0, blue: 0.0 };
+        let mut t = self.hit_sphere(Vector3 { x: 0.0, y: 0.0, z: -1.0 }, 0.5);
+        if t > 0.0 {
+            let v = self.at(t) - Vector3 { x: 0.0, y: 0.0, z: -1.0 };
+            let n = Vector3::unit(&v);
+            return Color { red: n.x + 1.0, green: n.y + 1.0, blue: n.z + 1.0} * 0.5;
         }
         let unit_direction = Vector3::unit(&self.direction);
-        let t = 0.5 * (unit_direction.y + 1.0);
+        t = 0.5 * (unit_direction.y + 1.0);
         (Color { red: 1.0, green: 1.0, blue: 1.0 } * (1.0 - t)) + (Color { red: 0.5, green: 0.7, blue: 1.0 } * t)
     }
 
-    pub fn hit_sphere(&self, center: Vector3, radius: f64) -> bool {
+    pub fn hit_sphere(&self, center: Vector3, radius: f64) -> f64 {
         let oc = self.origin - center;
         let a = Vector3::dot(&self.direction, &self.direction);
         let b = Vector3::dot(&oc, &self.direction) * 2.0;
         let c = Vector3::dot(&oc, &oc) - (radius * radius);
         let discriminant = b * b - 4.0 * a * c;
-        discriminant > 0.0
+        if discriminant < 0.0 {
+            return -1.0;
+        }
+        (-b - discriminant.sqrt()) / (2.0 * a)
     }
 }
 
