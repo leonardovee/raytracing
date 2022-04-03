@@ -9,19 +9,18 @@ pub struct Vector3 {
 
 impl Vector3 {
     pub fn length(&self) -> f64 {
-        self._normalize().sqrt()
+        self.normalize().sqrt()
     }
     
-    pub fn _normalize(&self) -> f64 {
+    pub fn normalize(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
 
     pub fn unit(vec: &Vector3) -> Vector3 {
-        let t = 1.0 / vec.length();
         Vector3 {
-            x: t * vec.x,
-            y: t * vec.y,
-            z: t * vec.z,
+            x: vec.x / vec.length(),
+            y: vec.y / vec.length(),
+            z: vec.z / vec.length(),
         }
     }
 }
@@ -95,6 +94,18 @@ impl Mul<i64> for Vector3 {
             x: self.x * rhs as f64,
             y: self.y * rhs as f64,
             z: self.z * rhs as f64,
+        }
+    }
+}
+
+impl Mul<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vector3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         }
     }
 }
@@ -173,6 +184,18 @@ mod tests {
     fn test_vector3_mul_by_i64() {
         let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
         let y = 2;
+
+        let mul = x * y;
+
+        assert_eq!(mul.x, 4.0);
+        assert_eq!(mul.y, 4.0);
+        assert_eq!(mul.z, 4.0);
+    }
+
+    #[test]
+    fn test_vector3_mul_by_f64() {
+        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let y = 2.0;
 
         let mul = x * y;
 

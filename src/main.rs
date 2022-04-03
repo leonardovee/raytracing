@@ -33,8 +33,8 @@ fn main() {
 
     for j in (0..image_height as i64).rev() {
         for i in 0..image_width {
-            let u = i / (image_width - 1);
-            let v = j  / (image_height as i64 - 1);
+            let u = i as f64 / (image_width - 1) as f64;
+            let v = j as f64 / (image_height - 1.0);
 
             let ray = Ray { origin, direction: lower_left_corner + (horizontal * u) + (vertical * v) - origin};
             let pixel_color = ray.color();
