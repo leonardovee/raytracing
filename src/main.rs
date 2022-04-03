@@ -1,6 +1,6 @@
 use std::{fs::File, io::Write};
 
-use rendering::{render, Color};
+use rendering::{render_pixel, Color};
 
 mod vector;
 mod rendering;
@@ -26,7 +26,7 @@ fn main() {
             let ig = 255.0 * g;
             let ib = 63.0;
 
-            render(&mut image_buffer, Color { red: ir, green: ig, blue: ib });
+            render_pixel(&mut image_buffer, Color { red: ir, green: ig, blue: ib });
         }
     }
 

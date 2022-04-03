@@ -11,7 +11,7 @@ pub struct Color {
     pub blue: f64,
 }
 
-pub fn render(image_buffer: &mut Vec<String>, color: Color) {
+pub fn render_pixel(image_buffer: &mut Vec<String>, color: Color) {
     image_buffer.push(color.red.to_string());
     image_buffer.push(String::from(" "));
 
