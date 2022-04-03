@@ -1,6 +1,6 @@
 use std::ops::{Add, Mul, Div, Sub};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vector3 {
     pub x: f64,
     pub y: f64,
@@ -9,15 +9,23 @@ pub struct Vector3 {
 
 impl Vector3 {
     pub fn length(&self) -> f64 {
-        self._normalize().sqrt()
+        self.normalize().sqrt()
     }
     
-    pub fn _normalize(&self) -> f64 {
+    pub fn normalize(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
 
     pub fn unit(vec: &Vector3) -> Vector3 {
-        vec / vec.length()
+        Vector3 {
+            x: vec.x / vec.length(),
+            y: vec.y / vec.length(),
+            z: vec.z / vec.length(),
+        }
+    }
+
+    pub fn dot(vec1: &Vector3, vec2: &Vector3) -> f64 {
+        (vec1.x * vec2.x) + (vec1.y * vec2.y) + (vec1.z * vec2.z)
     }
 }
 
@@ -41,6 +49,18 @@ impl Sub for Vector3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Sub<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn sub(self, rhs: f64) -> Self::Output {
+        Vector3 {
+            x: self.x - rhs,
+            y: self.y - rhs,
+            z: self.z - rhs,
         }
     }
 }
@@ -69,7 +89,7 @@ impl Div for Vector3 {
     }
 }
 
-impl Div<f64> for &Vector3 {
+impl Div<f64> for Vector3 {
     type Output = Vector3;
 
     fn div(self, rhs: f64) -> Self::Output {
@@ -78,6 +98,30 @@ impl Div<f64> for &Vector3 {
             x: t * self.x,
             y: t * self.y,
             z: t * self.z,
+        }
+    }
+}
+
+impl Mul<i64> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Vector3 {
+            x: self.x * rhs as f64,
+            y: self.y * rhs as f64,
+            z: self.z * rhs as f64,
+        }
+    }
+}
+
+impl Mul<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: f64) -> Self::Output {
+        Vector3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         }
     }
 }
@@ -150,5 +194,29 @@ mod tests {
         let unit = Vector3::unit(&y);
 
         assert_eq!(unit, Vector3 { x: 0.5773502691896257, y: 0.5773502691896257, z: 0.5773502691896257 });
+    }
+
+    #[test]
+    fn test_vector3_mul_by_i64() {
+        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let y = 2;
+
+        let mul = x * y;
+
+        assert_eq!(mul.x, 4.0);
+        assert_eq!(mul.y, 4.0);
+        assert_eq!(mul.z, 4.0);
+    }
+
+    #[test]
+    fn test_vector3_mul_by_f64() {
+        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let y = 2.0;
+
+        let mul = x * y;
+
+        assert_eq!(mul.x, 4.0);
+        assert_eq!(mul.y, 4.0);
+        assert_eq!(mul.z, 4.0);
     }
 }
