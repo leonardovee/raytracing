@@ -23,6 +23,10 @@ impl Vector3 {
             z: vec.z / vec.length(),
         }
     }
+
+    pub fn dot(vec1: &Vector3, vec2: &Vector3) -> f64 {
+        (vec1.x * vec2.x) + (vec1.y * vec2.y) + (vec1.z * vec2.z)
+    }
 }
 
 impl Add for Vector3 {
@@ -45,6 +49,18 @@ impl Sub for Vector3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Sub<f64> for Vector3 {
+    type Output = Vector3;
+
+    fn sub(self, rhs: f64) -> Self::Output {
+        Vector3 {
+            x: self.x - rhs,
+            y: self.y - rhs,
+            z: self.z - rhs,
         }
     }
 }

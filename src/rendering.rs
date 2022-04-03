@@ -9,9 +9,21 @@ pub struct Ray {
 
 impl Ray {
     pub fn color(&self) -> Color {
+        if self.hit_sphere(Vector3 { x: 0.0, y: 0.0, z: -1.0 }, 0.5) {
+            return Color { red: 1.0, green: 0.0, blue: 0.0 };
+        }
         let unit_direction = Vector3::unit(&self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
         (Color { red: 1.0, green: 1.0, blue: 1.0 } * (1.0 - t)) + (Color { red: 0.5, green: 0.7, blue: 1.0 } * t)
+    }
+
+    pub fn hit_sphere(&self, center: Vector3, radius: f64) -> bool {
+        let oc = self.origin - center;
+        let a = Vector3::dot(&self.direction, &self.direction);
+        let b = Vector3::dot(&oc, &self.direction) * 2.0;
+        let c = Vector3::dot(&oc, &oc) - (radius * radius);
+        let discriminant = b * b - 4.0 * a * c;
+        discriminant > 0.0
     }
 }
 
