@@ -1,5 +1,6 @@
-use std::{ops::{Add, Mul, Div, Sub}};
+use std::ops::{Add, Mul, Div, Sub};
 
+#[derive(Debug, PartialEq)]
 pub struct Vector3 {
     pub x: f64,
     pub y: f64,
@@ -7,12 +8,16 @@ pub struct Vector3 {
 }
 
 impl Vector3 {
-    pub fn _length(&self) -> f64 {
+    pub fn length(&self) -> f64 {
         self._normalize().sqrt()
     }
     
     pub fn _normalize(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
+    }
+
+    pub fn unit(vec: &Vector3) -> Vector3 {
+        vec / vec.length()
     }
 }
 
@@ -60,6 +65,19 @@ impl Div for Vector3 {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
             z: self.z / rhs.z,
+        }
+    }
+}
+
+impl Div<f64> for &Vector3 {
+    type Output = Vector3;
+
+    fn div(self, rhs: f64) -> Self::Output {
+        let t = 1.0 / rhs;
+        Vector3 {
+            x: t * self.x,
+            y: t * self.y,
+            z: t * self.z,
         }
     }
 }
@@ -120,8 +138,17 @@ mod tests {
     fn test_vector3_length() {
         let x = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
 
-        let length = x._length();
+        let length = x.length();
 
         assert_eq!(length, 5.196152422706632);
+    }
+
+    #[test]
+    fn test_vector3_unit() {
+        let y = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
+
+        let unit = Vector3::unit(&y);
+
+        assert_eq!(unit, Vector3 { x: 0.5773502691896257, y: 0.5773502691896257, z: 0.5773502691896257 });
     }
 }

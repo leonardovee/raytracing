@@ -1,3 +1,10 @@
+use crate::vector::Vector3;
+
+pub struct Ray {
+    pub origin: Vector3,
+    pub direction: Vector3,
+}
+
 pub struct Color {
     pub red: f64,
     pub green: f64,
