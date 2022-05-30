@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Div, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vector3 {
@@ -11,7 +11,7 @@ impl Vector3 {
     pub fn length(&self) -> f64 {
         self.normalize().sqrt()
     }
-    
+
     pub fn normalize(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
@@ -132,8 +132,16 @@ mod tests {
 
     #[test]
     fn test_vector3_add() {
-        let x = Vector3 { x: 1.0, y: 1.0, z: 1.0 };
-        let y = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 1.0,
+            y: 1.0,
+            z: 1.0,
+        };
+        let y = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
 
         let add = x + y;
 
@@ -144,8 +152,16 @@ mod tests {
 
     #[test]
     fn test_vector3_sub() {
-        let x = Vector3 { x: 5.0, y: 5.0, z: 5.0 };
-        let y = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 5.0,
+            y: 5.0,
+            z: 5.0,
+        };
+        let y = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
 
         let sub = x - y;
 
@@ -156,8 +172,16 @@ mod tests {
 
     #[test]
     fn test_vector3_mul() {
-        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
-        let y = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
+        let y = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
 
         let mul = x * y;
 
@@ -168,8 +192,16 @@ mod tests {
 
     #[test]
     fn test_vector3_div() {
-        let x = Vector3 { x: 10.0, y: 10.0, z: 10.0 };
-        let y = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 10.0,
+            y: 10.0,
+            z: 10.0,
+        };
+        let y = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
 
         let div = x / y;
 
@@ -180,7 +212,11 @@ mod tests {
 
     #[test]
     fn test_vector3_length() {
-        let x = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
+        let x = Vector3 {
+            x: 3.0,
+            y: 3.0,
+            z: 3.0,
+        };
 
         let length = x.length();
 
@@ -189,16 +225,31 @@ mod tests {
 
     #[test]
     fn test_vector3_unit() {
-        let y = Vector3 { x: 3.0, y: 3.0, z: 3.0 };
+        let y = Vector3 {
+            x: 3.0,
+            y: 3.0,
+            z: 3.0,
+        };
 
         let unit = Vector3::unit(&y);
 
-        assert_eq!(unit, Vector3 { x: 0.5773502691896257, y: 0.5773502691896257, z: 0.5773502691896257 });
+        assert_eq!(
+            unit,
+            Vector3 {
+                x: 0.5773502691896257,
+                y: 0.5773502691896257,
+                z: 0.5773502691896257
+            }
+        );
     }
 
     #[test]
     fn test_vector3_mul_by_i64() {
-        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
         let y = 2;
 
         let mul = x * y;
@@ -210,7 +261,11 @@ mod tests {
 
     #[test]
     fn test_vector3_mul_by_f64() {
-        let x = Vector3 { x: 2.0, y: 2.0, z: 2.0 };
+        let x = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
         let y = 2.0;
 
         let mul = x * y;
