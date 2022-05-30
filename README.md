@@ -1,5 +1,4 @@
-# Raytracing
-[![Rust](https://github.com/leonardovee/raytracing/actions/workflows/rust.yml/badge.svg)](https://github.com/leonardovee/raytracing/actions/workflows/rust.yml)
+# Raytracing [![Rust](https://github.com/leonardovee/raytracing/actions/workflows/rust.yml/badge.svg)](https://github.com/leonardovee/raytracing/actions/workflows/rust.yml)
 
 The study of a simple path tracer implementation (generate a raytraced image, in shorts).
 
