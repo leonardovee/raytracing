@@ -1,4 +1,4 @@
-use std::{ops::{Mul, Add}};
+use std::ops::{Add, Mul};
 
 use crate::vector::Vector3;
 
@@ -13,15 +13,40 @@ impl Ray {
     }
 
     pub fn color(&self) -> Color {
-        let mut t = self.hit_sphere(Vector3 { x: 0.0, y: 0.0, z: -1.0 }, 0.5);
+        let mut t = self.hit_sphere(
+            Vector3 {
+                x: 0.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            0.5,
+        );
         if t > 0.0 {
-            let v = self.at(t) - Vector3 { x: 0.0, y: 0.0, z: -1.0 };
+            let v = self.at(t)
+                - Vector3 {
+                    x: 0.0,
+                    y: 0.0,
+                    z: -1.0,
+                };
             let n = Vector3::unit(&v);
-            return Color { red: n.x + 1.0, green: n.y + 1.0, blue: n.z + 1.0} * 0.5;
+            return Color {
+                red: n.x + 1.0,
+                green: n.y + 1.0,
+                blue: n.z + 1.0,
+            } * 0.5;
         }
         let unit_direction = Vector3::unit(&self.direction);
         t = 0.5 * (unit_direction.y + 1.0);
-        (Color { red: 1.0, green: 1.0, blue: 1.0 } * (1.0 - t)) + (Color { red: 0.5, green: 0.7, blue: 1.0 } * t)
+        (Color {
+            red: 1.0,
+            green: 1.0,
+            blue: 1.0,
+        } * (1.0 - t))
+            + (Color {
+                red: 0.5,
+                green: 0.7,
+                blue: 1.0,
+            } * t)
     }
 
     pub fn hit_sphere(&self, center: Vector3, radius: f64) -> f64 {
