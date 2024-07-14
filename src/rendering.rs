@@ -49,6 +49,7 @@ impl Ray {
             } * t)
     }
 
+    // TODO: 6.2. Simplifying the Ray-Sphere Intersection Code
     pub fn hit_sphere(&self, center: Vector3, radius: f64) -> f64 {
         let oc = self.origin - center;
         let a = Vector3::dot(&self.direction, &self.direction);
@@ -102,4 +103,85 @@ pub fn render_pixel(image_buffer: &mut Vec<String>, color: Color) {
 
     image_buffer.push((255.999 * color.blue).to_string());
     image_buffer.push(String::from("\n"));
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn create_ray(origin: (f64, f64, f64), direction: (f64, f64, f64)) -> Ray {
+        Ray {
+            origin: Vector3::new(origin.0, origin.1, origin.2),
+            direction: Vector3::new(direction.0, direction.1, direction.2),
+        }
+    }
+
+    #[test]
+    fn test_ray_hits_sphere() {
+        let ray = create_ray((0.0, 0.0, 0.0), (1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t > 0.0, "Ray should hit the sphere");
+        assert!(
+            (t - 2.0).abs() < 1e-6,
+            "Intersection point should be at t ≈ 2.0"
+        );
+    }
+
+    #[test]
+    fn test_ray_misses_sphere() {
+        let ray = create_ray((0.0, 2.0, 0.0), (1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t < 0.0, "Ray should miss the sphere");
+    }
+
+    #[test]
+    fn test_ray_inside_sphere() {
+        let ray = create_ray((3.0, 0.0, 0.0), (1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t < 0.0, "Ray inside sphere should return negative t");
+        assert!(
+            (t + 1.0).abs() < 1e-6,
+            "Intersection point should be at t ≈ -1.0"
+        );
+    }
+
+    #[test]
+    fn test_ray_tangent_to_sphere() {
+        let ray = create_ray((0.0, 1.0, 0.0), (1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t > 0.0, "Ray should be tangent to the sphere");
+        assert!((t - 3.0).abs() < 1e-6, "Tangent point should be at t ≈ 3.0");
+    }
+
+    #[test]
+    fn test_ray_opposite_direction() {
+        let ray = create_ray((0.0, 0.0, 0.0), (-1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t < 0.0, "Ray in opposite direction should miss the sphere");
+    }
+
+    #[test]
+    fn test_sphere_behind_ray_origin() {
+        let ray = create_ray((5.0, 0.0, 0.0), (1.0, 0.0, 0.0));
+        let center = Vector3::new(3.0, 0.0, 0.0);
+        let radius = 1.0;
+
+        let t = ray.hit_sphere(center, radius);
+        assert!(t < 0.0, "Sphere behind ray origin should not be hit");
+    }
 }
