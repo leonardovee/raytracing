@@ -1,4 +1,4 @@
-use std::{fs::File, io::Write};
+use std::{fs::File, io::Write, time::Instant};
 
 use hittable_list::HittableList;
 use point::Point3;
@@ -19,8 +19,15 @@ mod vector;
 fn main() {
     // image definitions
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 400;
+    let image_width = 1920;
     let image_height = image_width as f64 / aspect_ratio;
+
+    println!(
+        "Rendering image with resolution: {}x{}",
+        image_width, image_height
+    );
+
+    let start_time = Instant::now();
 
     // camera definition
     let viewport_height = 2.0;
@@ -81,4 +88,7 @@ fn main() {
 
     let mut file = File::create("test.ppm").unwrap();
     file.write_all(image_buffer.concat().as_bytes()).unwrap();
+
+    let elapsed_time = start_time.elapsed();
+    println!("Rendering completed in {:.2?}", elapsed_time);
 }
