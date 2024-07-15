@@ -1,9 +1,19 @@
 use std::{fs::File, io::Write};
 
-use rendering::{render_pixel, Ray};
+use hittable_list::HittableList;
+use point::Point3;
+use ray::Ray;
+use render::render_pixel;
+use sphere::Sphere;
 use vector::Vector3;
 
-mod rendering;
+mod color;
+mod hittable;
+mod hittable_list;
+mod point;
+mod ray;
+mod render;
+mod sphere;
 mod vector;
 
 fn main() {
@@ -41,6 +51,10 @@ fn main() {
             z: focal_length,
         };
 
+    let mut world = HittableList::new();
+    world.add(Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.add(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
+
     // render process
     let mut image_buffer: Vec<String> = vec![
         String::from("P3\n"),
@@ -59,7 +73,7 @@ fn main() {
                 origin,
                 direction: lower_left_corner + (horizontal * u) + (vertical * v) - origin,
             };
-            let pixel_color = ray.color();
+            let pixel_color = ray.color(&world);
 
             render_pixel(&mut image_buffer, pixel_color);
         }

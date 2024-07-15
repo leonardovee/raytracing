@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vector3 {
@@ -85,6 +85,18 @@ impl Mul for Vector3 {
     }
 }
 
+impl Mul<Vector3> for f64 {
+    type Output = Vector3;
+
+    fn mul(self, rhs: Vector3) -> Vector3 {
+        Vector3 {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
 impl Div for Vector3 {
     type Output = Vector3;
 
@@ -130,6 +142,18 @@ impl Mul<f64> for Vector3 {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+        }
+    }
+}
+
+impl Neg for Vector3 {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Vector3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
         }
     }
 }
@@ -281,5 +305,32 @@ mod tests {
         assert_eq!(mul.x, 4.0);
         assert_eq!(mul.y, 4.0);
         assert_eq!(mul.z, 4.0);
+    }
+
+    #[test]
+    fn test_vector3_neg() {
+        let x = Vector3 {
+            x: 2.0,
+            y: 2.0,
+            z: 2.0,
+        };
+
+        let neg = -x;
+
+        assert_eq!(neg.x, -2.0);
+        assert_eq!(neg.y, -2.0);
+        assert_eq!(neg.z, -2.0);
+    }
+
+    #[test]
+    fn test_vector3_scalar_multiplication() {
+        let v = Vector3::new(1.0, 2.0, 3.0);
+        let scalar = 2.0;
+
+        let mul = scalar * v;
+
+        assert_eq!(mul.x, 2.0);
+        assert_eq!(mul.y, 4.0);
+        assert_eq!(mul.z, 6.0);
     }
 }
