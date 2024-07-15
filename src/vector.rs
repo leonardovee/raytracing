@@ -20,6 +20,10 @@ impl Vector3 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
 
+    pub fn length_squared(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
     pub fn unit(vec: &Vector3) -> Vector3 {
         Vector3 {
             x: vec.x / vec.length(),

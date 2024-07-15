@@ -49,17 +49,18 @@ impl Ray {
             } * t)
     }
 
-    // TODO: 6.2. Simplifying the Ray-Sphere Intersection Code
     pub fn hit_sphere(&self, center: Vector3, radius: f64) -> f64 {
-        let oc = self.origin - center;
-        let a = Vector3::dot(&self.direction, &self.direction);
-        let b = Vector3::dot(&oc, &self.direction) * 2.0;
-        let c = Vector3::dot(&oc, &oc) - (radius * radius);
-        let discriminant = b * b - 4.0 * a * c;
+        let oc = center - self.origin;
+        let a = self.direction.length_squared();
+        let h = Vector3::dot(&self.direction, &oc);
+        let c = oc.length_squared() - radius * radius;
+        let discriminant = h * h - a * c;
+
         if discriminant < 0.0 {
-            return -1.0;
+            -1.0
+        } else {
+            (h - discriminant.sqrt()) / a
         }
-        (-b - discriminant.sqrt()) / (2.0 * a)
     }
 }
 
