@@ -4,12 +4,12 @@ The study of a simple path tracer implementation (generate a raytraced image, in
 
 ## How to run the code
 
-First, make sure to have [Rust](https://www.rust-lang.org/tools/install) installed.
+```
+git clone https://github.com/leonardovee/raytracing.git && cd raytracing
+```
 
 ```
-$ git clone https://github.com/leonardovee/raytracing.git && cd raytracing
-
-$ cargo run
+cargo run
 ```
 
 ## Outcome
