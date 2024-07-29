@@ -7,6 +7,12 @@ pub struct Color {
     pub blue: f64,
 }
 
+impl Color {
+    pub fn new(red: f64, green: f64, blue: f64) -> Self {
+        Color { red, green, blue }
+    }
+}
+
 impl Add for Color {
     type Output = Color;
 
