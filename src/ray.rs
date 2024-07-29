@@ -1,4 +1,5 @@
 use crate::color::Color;
+use crate::interval::Interval;
 use crate::{
     hittable::{HitRecord, Hittable},
     point::Point3,
@@ -29,7 +30,7 @@ impl Ray {
 
     pub fn color(&self, world: &dyn Hittable) -> Color {
         let mut rec = HitRecord::new();
-        if world.hit(&self, 0.0, f64::INFINITY, &mut rec) {
+        if world.hit(self, Interval::new(0.0, f64::INFINITY), &mut rec) {
             let color_vector = 0.5 * (rec.normal + Vector3::new(1.0, 1.0, 1.0));
             return Color {
                 red: color_vector.x,
@@ -102,7 +103,7 @@ mod tests {
     fn test_ray_color_hit() {
         struct MockHittable;
         impl Hittable for MockHittable {
-            fn hit(&self, _ray: &Ray, _t_min: f64, _t_max: f64, rec: &mut HitRecord) -> bool {
+            fn hit(&self, _ray: &Ray, _int: Interval, rec: &mut HitRecord) -> bool {
                 rec.normal = Vector3::new(0.0, 1.0, 0.0);
                 true
             }
@@ -121,7 +122,7 @@ mod tests {
     fn test_ray_color_miss() {
         struct MockHittable;
         impl Hittable for MockHittable {
-            fn hit(&self, _ray: &Ray, _t_min: f64, _t_max: f64, _rec: &mut HitRecord) -> bool {
+            fn hit(&self, _ray: &Ray, _int: Interval, _rec: &mut HitRecord) -> bool {
                 false
             }
         }

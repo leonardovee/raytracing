@@ -1,5 +1,6 @@
 use crate::{
     hittable::{HitRecord, Hittable},
+    interval::Interval,
     point::Point3,
     ray::Ray,
     vector::Vector3,
@@ -20,7 +21,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, r: &Ray, ray_tmin: f64, ray_tmax: f64, rec: &mut HitRecord) -> bool {
+    fn hit(&self, r: &Ray, int: Interval, rec: &mut HitRecord) -> bool {
         let oc = self.center - *r.origin();
         let a = r.direction().length_squared();
         let h = Vector3::dot(&r.direction, &oc);
@@ -34,9 +35,9 @@ impl Hittable for Sphere {
         let sqrtd = discriminant.sqrt();
 
         let mut root = (h - sqrtd) / a;
-        if root <= ray_tmin || ray_tmax <= root {
+        if root <= int.min || int.max <= root {
             root = (h + sqrtd) / a;
-            if root <= ray_tmin || ray_tmax <= root {
+            if root <= int.min || int.max <= root {
                 return false;
             }
         }
@@ -73,7 +74,7 @@ mod tests {
         let ray = Ray::new(Point3::new(0.0, 0.0, -5.0), Vector3::new(1.0, 1.0, 0.0));
         let mut rec = HitRecord::new();
 
-        assert!(!sphere.hit(&ray, 0.0, f64::INFINITY, &mut rec));
+        assert!(!sphere.hit(&ray, Interval::new(0.0, f64::INFINITY), &mut rec));
     }
 
     #[test]
@@ -82,7 +83,7 @@ mod tests {
         let ray = Ray::new(Point3::new(0.0, 0.0, -5.0), Vector3::new(0.0, 0.0, 1.0));
         let mut rec = HitRecord::new();
 
-        assert!(sphere.hit(&ray, 0.0, f64::INFINITY, &mut rec));
+        assert!(sphere.hit(&ray, Interval::new(0.0, f64::INFINITY), &mut rec));
         assert!((rec.t - 4.0).abs() < EPSILON);
         assert_eq!(rec.p, Point3::new(0.0, 0.0, -1.0));
         assert_eq!(rec.normal, Vector3::new(0.0, 0.0, -1.0));
@@ -95,7 +96,7 @@ mod tests {
         let ray = Ray::new(Point3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, 1.0));
         let mut rec = HitRecord::new();
 
-        assert!(sphere.hit(&ray, 0.0, f64::INFINITY, &mut rec));
+        assert!(sphere.hit(&ray, Interval::new(0.0, f64::INFINITY), &mut rec));
         assert!((rec.t - 1.0).abs() < EPSILON);
         assert_eq!(rec.p, Point3::new(0.0, 0.0, 1.0));
         assert_eq!(rec.normal, Vector3::new(0.0, 0.0, -1.0));
@@ -108,7 +109,7 @@ mod tests {
         let ray = Ray::new(Point3::new(0.0, 0.0, -5.0), Vector3::new(0.0, 0.0, 1.0));
         let mut rec = HitRecord::new();
 
-        assert!(!sphere.hit(&ray, 0.0, 3.0, &mut rec));
+        assert!(!sphere.hit(&ray, Interval::new(0.0, 3.0), &mut rec));
     }
 
     #[test]
@@ -117,6 +118,6 @@ mod tests {
         let ray = Ray::new(Point3::new(0.0, 0.0, -0.5), Vector3::new(0.0, 0.0, 1.0));
         let mut rec = HitRecord::new();
 
-        assert!(!sphere.hit(&ray, 2.0, f64::INFINITY, &mut rec));
+        assert!(!sphere.hit(&ray, Interval::new(2.0, f64::INFINITY), &mut rec));
     }
 }

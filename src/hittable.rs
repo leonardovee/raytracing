@@ -1,3 +1,4 @@
+use crate::interval::Interval;
 use crate::Ray;
 use crate::{point::Point3, vector::Vector3};
 
@@ -20,7 +21,7 @@ impl HitRecord {
     }
 
     pub fn set_face_normal(&mut self, r: &Ray, outward_normal: &Vector3) {
-        self.front_face = Vector3::dot(&r.direction(), outward_normal) < 0.0;
+        self.front_face = Vector3::dot(r.direction(), outward_normal) < 0.0;
         self.normal = if self.front_face {
             *outward_normal
         } else {
@@ -30,5 +31,5 @@ impl HitRecord {
 }
 
 pub trait Hittable {
-    fn hit(&self, r: &Ray, ray_tmin: f64, ray_tmax: f64, rec: &mut HitRecord) -> bool;
+    fn hit(&self, r: &Ray, int: Interval, rec: &mut HitRecord) -> bool;
 }

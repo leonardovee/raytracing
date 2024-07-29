@@ -10,6 +10,7 @@ use vector::Vector3;
 mod color;
 mod hittable;
 mod hittable_list;
+mod interval;
 mod point;
 mod ray;
 mod render;
@@ -76,19 +77,19 @@ fn main() {
             let u = i as f64 / (image_width - 1) as f64;
             let v = j as f64 / (image_height - 1.0);
 
-            let ray = Ray {
+            let ray = Ray::new(
                 origin,
-                direction: lower_left_corner + (horizontal * u) + (vertical * v) - origin,
-            };
+                lower_left_corner + (horizontal * u) + (vertical * v) - origin,
+            );
             let pixel_color = ray.color(&world);
 
             render_pixel(&mut image_buffer, pixel_color);
         }
     }
 
-    let mut file = File::create("test.ppm").unwrap();
-    file.write_all(image_buffer.concat().as_bytes()).unwrap();
-
     let elapsed_time = start_time.elapsed();
     println!("Rendering completed in {:.2?}", elapsed_time);
+
+    let mut file = File::create("test.ppm").unwrap();
+    file.write_all(image_buffer.concat().as_bytes()).unwrap();
 }
