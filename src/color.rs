@@ -36,3 +36,11 @@ impl Mul<f64> for Color {
         }
     }
 }
+
+impl PartialEq for Color {
+    fn eq(&self, other: &Self) -> bool {
+        (self.red - other.red).abs() < f64::EPSILON
+            && (self.green - other.green).abs() < f64::EPSILON
+            && (self.blue - other.blue).abs() < f64::EPSILON
+    }
+}

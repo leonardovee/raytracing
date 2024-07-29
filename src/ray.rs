@@ -28,47 +28,52 @@ impl Ray {
         &self.direction
     }
 
-    pub fn color(&self, world: &dyn Hittable) -> Color {
+    pub fn color(&self, depth: i32, world: &dyn Hittable) -> Color {
+        if depth <= 0 {
+            return Color::new(0.0, 0.0, 0.0);
+        }
         let mut rec = HitRecord::new();
         if world.hit(self, Interval::new(0.0, f64::INFINITY), &mut rec) {
-            let color_vector = 0.5 * (rec.normal + Vector3::new(1.0, 1.0, 1.0));
-            return Color {
-                red: color_vector.x,
-                green: color_vector.y,
-                blue: color_vector.z,
-            };
+            let direction = Vector3::random_on_hemisphere(&rec.normal);
+            let new_ray = Ray::new(rec.p, direction);
+            return new_ray.color(depth - 1, world) * 0.5;
         }
 
         let unit_direction = Vector3::unit(&self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
-        Color {
-            red: 1.0,
-            green: 1.0,
-            blue: 1.0,
-        } * (1.0 - t)
-            + Color {
-                red: 0.5,
-                green: 0.7,
-                blue: 1.0,
-            } * t
+        Color::new(1.0, 1.0, 1.0) * (1.0 - t) + Color::new(0.5, 0.7, 1.0) * t
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::point::Point3;
-    use crate::vector::Vector3;
     use std::f64::EPSILON;
+
+    struct MockHittable {
+        should_hit: bool,
+        normal: Vector3,
+    }
+
+    impl Hittable for MockHittable {
+        fn hit(&self, _ray: &Ray, _int: Interval, rec: &mut HitRecord) -> bool {
+            if self.should_hit {
+                rec.normal = self.normal;
+                rec.p = Point3::new(1.0, 1.0, 1.0);
+                true
+            } else {
+                false
+            }
+        }
+    }
 
     #[test]
     fn test_ray_new() {
         let origin = Point3::new(1.0, 2.0, 3.0);
         let direction = Vector3::new(4.0, 5.0, 6.0);
         let ray = Ray::new(origin, direction);
-
-        assert_eq!(ray.origin, origin);
-        assert_eq!(ray.direction, direction);
+        assert_eq!(*ray.origin(), origin);
+        assert_eq!(*ray.direction(), direction);
     }
 
     #[test]
@@ -76,69 +81,44 @@ mod tests {
         let origin = Point3::new(1.0, 2.0, 3.0);
         let direction = Vector3::new(4.0, 5.0, 6.0);
         let ray = Ray::new(origin, direction);
-
         let point = ray.at(2.0);
         assert_eq!(point, Vector3::new(9.0, 12.0, 15.0));
     }
 
     #[test]
-    fn test_ray_origin() {
-        let origin = Point3::new(1.0, 2.0, 3.0);
-        let direction = Vector3::new(4.0, 5.0, 6.0);
-        let ray = Ray::new(origin, direction);
-
-        assert_eq!(ray.origin(), &origin);
-    }
-
-    #[test]
-    fn test_ray_direction() {
-        let origin = Point3::new(1.0, 2.0, 3.0);
-        let direction = Vector3::new(4.0, 5.0, 6.0);
-        let ray = Ray::new(origin, direction);
-
-        assert_eq!(ray.direction(), &direction);
+    fn test_ray_color_no_hit() {
+        let ray = Ray::new(Point3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
+        let world = MockHittable {
+            should_hit: false,
+            normal: Vector3::new(0.0, 0.0, 0.0),
+        };
+        let color = ray.color(1, &world);
+        assert!((color.red - 0.5).abs() < EPSILON);
+        assert!((color.green - 0.7).abs() < EPSILON);
+        assert!((color.blue - 1.0).abs() < EPSILON);
     }
 
     #[test]
     fn test_ray_color_hit() {
-        struct MockHittable;
-        impl Hittable for MockHittable {
-            fn hit(&self, _ray: &Ray, _int: Interval, rec: &mut HitRecord) -> bool {
-                rec.normal = Vector3::new(0.0, 1.0, 0.0);
-                true
-            }
-        }
-
         let ray = Ray::new(Point3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, -1.0));
-        let world = MockHittable;
-        let color = ray.color(&world);
-
-        assert!((color.red - 0.5).abs() < EPSILON);
-        assert!((color.green - 1.0).abs() < EPSILON);
-        assert!((color.blue - 0.5).abs() < EPSILON);
+        let world = MockHittable {
+            should_hit: true,
+            normal: Vector3::new(0.0, 0.0, 1.0),
+        };
+        let color = ray.color(1, &world);
+        assert!(color.red >= 0.0 && color.red <= 0.5);
+        assert!(color.green >= 0.0 && color.green <= 0.5);
+        assert!(color.blue >= 0.0 && color.blue <= 0.5);
     }
 
     #[test]
-    fn test_ray_color_miss() {
-        struct MockHittable;
-        impl Hittable for MockHittable {
-            fn hit(&self, _ray: &Ray, _int: Interval, _rec: &mut HitRecord) -> bool {
-                false
-            }
-        }
-
-        let ray = Ray::new(Point3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
-        let world = MockHittable;
-        let color = ray.color(&world);
-
-        let unit_direction = Vector3::unit(&ray.direction);
-        let t = 0.5 * (unit_direction.y + 1.0);
-        let expected_red = (1.0 * (1.0 - t)) + (0.5 * t);
-        let expected_green = (1.0 * (1.0 - t)) + (0.7 * t);
-        let expected_blue = (1.0 * (1.0 - t)) + (1.0 * t);
-
-        assert!((color.red - expected_red).abs() < EPSILON);
-        assert!((color.green - expected_green).abs() < EPSILON);
-        assert!((color.blue - expected_blue).abs() < EPSILON);
+    fn test_ray_color_max_depth() {
+        let ray = Ray::new(Point3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, -1.0));
+        let world = MockHittable {
+            should_hit: true,
+            normal: Vector3::new(0.0, 0.0, 1.0),
+        };
+        let color = ray.color(0, &world);
+        assert_eq!(color, Color::new(0.0, 0.0, 0.0));
     }
 }

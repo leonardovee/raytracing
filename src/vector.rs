@@ -1,5 +1,7 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+use rand::Rng;
+
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Vector3 {
     pub x: f64,
@@ -34,6 +36,50 @@ impl Vector3 {
 
     pub fn dot(vec1: &Vector3, vec2: &Vector3) -> f64 {
         (vec1.x * vec2.x) + (vec1.y * vec2.y) + (vec1.z * vec2.z)
+    }
+
+    pub fn random() -> Self {
+        let mut rng = rand::thread_rng();
+        Vector3 {
+            x: rng.gen(),
+            y: rng.gen(),
+            z: rng.gen(),
+        }
+    }
+
+    pub fn random_range(min: f64, max: f64) -> Self {
+        let mut rng = rand::thread_rng();
+        Vector3 {
+            x: rng.gen_range(min..max),
+            y: rng.gen_range(min..max),
+            z: rng.gen_range(min..max),
+        }
+    }
+
+    pub fn unit_vector(v: &Vector3) -> Vector3 {
+        *v / v.length()
+    }
+
+    pub fn random_in_unit_sphere() -> Vector3 {
+        loop {
+            let p = Vector3::random_range(-1.0, 1.0);
+            if p.length_squared() < 1.0 {
+                return p;
+            }
+        }
+    }
+
+    pub fn random_unit_vector() -> Vector3 {
+        Vector3::unit_vector(&Vector3::random_in_unit_sphere())
+    }
+
+    pub fn random_on_hemisphere(normal: &Vector3) -> Vector3 {
+        let on_unit_sphere = Vector3::random_unit_vector();
+        if Vector3::dot(&on_unit_sphere, normal) > 0.0 {
+            on_unit_sphere
+        } else {
+            -on_unit_sphere
+        }
     }
 }
 

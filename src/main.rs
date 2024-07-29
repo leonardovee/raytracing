@@ -37,7 +37,7 @@ fn main() {
     world.add(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
     // render
-    let camera = Camera::new(aspect_ratio, image_width, 100);
+    let camera = Camera::new(aspect_ratio, image_width, 100, 10);
     camera.render(&world);
 
     let elapsed_time = start_time.elapsed();

@@ -16,10 +16,16 @@ pub struct Camera {
     pixel_delta_u: Vector3,
     pixel_delta_v: Vector3,
     pixel_samples_scale: f64,
+    max_depth: i32,
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: i32, samples_per_pixel: i32) -> Self {
+    pub fn new(
+        aspect_ratio: f64,
+        image_width: i32,
+        samples_per_pixel: i32,
+        max_depth: i32,
+    ) -> Self {
         let mut camera = Camera {
             aspect_ratio,
             image_width,
@@ -30,6 +36,7 @@ impl Camera {
             pixel_delta_u: Vector3::new(0.0, 0.0, 0.0),
             pixel_delta_v: Vector3::new(0.0, 0.0, 0.0),
             pixel_samples_scale: 0.0,
+            max_depth,
         };
         camera.initialize();
         camera
@@ -92,13 +99,13 @@ impl Camera {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..self.samples_per_pixel {
                     let r = self.get_ray(i, j);
-                    pixel_color = pixel_color + r.color(world);
+                    pixel_color = pixel_color + r.color(self.max_depth, world);
                 }
                 render_pixel(&mut image_buffer, pixel_color * self.pixel_samples_scale);
             }
         }
 
-        let mut file = File::create("output.ppm").unwrap();
+        let mut file = File::create("test.ppm").unwrap();
         file.write_all(image_buffer.concat().as_bytes()).unwrap();
     }
 }
