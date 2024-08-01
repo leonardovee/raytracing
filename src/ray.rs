@@ -33,7 +33,7 @@ impl Ray {
             return Color::new(0.0, 0.0, 0.0);
         }
         let mut rec = HitRecord::new();
-        if world.hit(self, Interval::new(0.0, f64::INFINITY), &mut rec) {
+        if world.hit(self, Interval::new(0.001, f64::INFINITY), &mut rec) {
             let direction = Vector3::random_on_hemisphere(&rec.normal);
             let new_ray = Ray::new(rec.p, direction);
             return new_ray.color(depth - 1, world) * 0.5;
